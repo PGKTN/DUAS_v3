@@ -1,0 +1,4 @@
+﻿  main.c
+C:\DUAS_v3\main.c(54,27): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\DUAS_v3\main.c(163,14): warning C4244: '함수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  DUAS_v3.vcxproj -> C:\DUAS_v3\x64\Debug\DUAS_v3.exe

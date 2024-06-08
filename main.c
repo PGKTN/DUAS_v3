@@ -44,8 +44,8 @@ double Get_P_0(double sigma, double Cd0, double rho, double A_disk, double v_tip
 
 int main()
 {
-	
-	double W_gross = 3000;
+
+	double W_gross = 4000;
 	double W_payload_req = 550;
 	double payload_calc = 0.0;
 
@@ -53,12 +53,18 @@ int main()
 
 	while (abs(W_payload_req - payload_calc) > 10e-6)
 	{
-		printf("----------------%d번째----------------\n", i);
+		printf("---------------------------------------\n");
+		printf("--------------  %d  ------------------\n", i);
+		printf("---------------------------------------\n");
 		i++;
 
 
-		double wing_span = 9.402822;
-		double wing_root = 1.8;
+		/////////////////
+		/// 기?초 정보 ///
+		/////////////////
+
+		double wing_span = 11.66823;
+		double wing_root = 1.5;
 		double wing_tip = 1.2;
 		double wing_chord = (wing_root + wing_tip) / 2;
 		double AR = wing_span / wing_root;
@@ -67,25 +73,28 @@ int main()
 
 		double WL = W_gross / A_wing;
 
-		double r_disk = 1.5;
+		double r_disk = 1.3;
 		double A_disk = Pi * pow(r_disk, 2);
 		double N_rotor = 4;
 		double N_crotor = 3;
 
+		double Cd0 = 0.03945;
 
+		double eta_m = 0.9;
+		double eta_inv = 0.9;
 
-
-
-
-
-
-
-		double T_hover = W_gross * g * 1.2;
-
-		double P_hover = sqrt(pow(T_hover, 3) / (2 * rho0 * A_disk * 4));
-		double pHOVER = P_hover / W_gross;
-		printf("P_hover = %lf [W]\n", P_hover);
 		double V_max = 55.55555556;
+
+		double sigma = 0.2262;
+
+		double Cd_rod = 0.00182;
+
+		double Cd_vt = 0.00139;
+
+
+		//double P_hover = sqrt(pow(T_hover, 3) / (2 * rho0 * A_disk * 4));
+		//double pHOVER = P_hover / W_gross;
+		//printf("P_hover = %lf [W]\n", P_hover);
 
 		//double e = 0.8;
 		//double K = pow(Pi * e * AR, -1);
@@ -114,27 +123,19 @@ int main()
 		//printf("W_bat = %lf [kg]\n\n", W_bat);
 
 
-
-
-
-
-
-		////////////////////////
-		/// Mission Analysis ///
-		////////////////////////
-
-
-
+		////////////////////////////////////
+		/// Cruise 해석 겸 wing span 찾기 ///
+		////////////////////////////////////
 
 		double range_cruise = 50 * 1000; // [m]
 		double t_cruise = range_cruise / V_max;
 		double rho_cruise = Get_rho(rho0, 600);
 		double W_gross_lb = W_gross * kgtolb;
 
-		double fe_fuse = 1.7 * pow(((W_gross_lb) / 1000), 2 / 3);		// lb -> kg
+		double fe_fuse = 1.2 * pow(((W_gross_lb) / 1000), 2 / 3);		// lb -> kg
 		double D_fuselage = fe_fuse * 0.5 * rho_cruise * pow(V_max, 2);
 
-		double fe_hub = 0.85 * pow(((W_gross_lb) / 1000), 2 / 3);		// lb -> kg
+		double fe_hub = 0.7 * pow(((W_gross_lb) / 1000), 2 / 3);		// lb -> kg
 		double D_hub = fe_hub * 0.5 * rho_cruise * pow(V_max, 2);
 
 		double alpha = 4.3 * Pi / 180; // degree to radian
@@ -145,7 +146,18 @@ int main()
 		double D_wing = 0.5 * rho_cruise * pow(V_max, 2) * A_wing * Cd;
 		//printf("D_wing = %lf [N]\n", D_wing);
 
-		double F_x = D_hub * 4 + D_fuselage + D_wing * cos(alpha) + L_wing * sin(alpha);
+		double A_rod = Pi * pow(0.1, 2);
+		double D_rod = 0.5 * rho_cruise * pow(V_max, 2) * A_rod * Cd_rod;
+
+		double vt_span = 1.25;
+		double vt_root = 1.2;
+		double vt_tip = 0.8;
+		double A_vt = (vt_root + vt_tip) * vt_span / 2;
+		double D_vt = 0.5 * rho_cruise * pow(V_max, 2) * A_vt * Cd_vt;
+
+
+
+		double F_x = D_hub * 4 + D_fuselage + D_rod * 2 + D_vt * 2 + D_wing * cos(alpha) + L_wing * sin(alpha);
 		double T1 = W_gross * g - L_wing * cos(alpha) + D_wing * sin(alpha);
 
 		while (abs(T1) > 10e-6)
@@ -165,50 +177,68 @@ int main()
 		printf("wing_span = %lf [m]\n", wing_span);
 		printf("T1 = %lf [N] \n", T1);
 
-		double P_cruise_total = F_x * V_max;
-		printf("P_cruise_total = %lf [W] \n", P_cruise_total);
-		double P_cruise_motor = P_cruise_total / N_crotor;
+		double P_cruise_total1 = F_x * V_max;
+		printf("P_cruise_total = %lf [W] \n", P_cruise_total1);
+
+		double P_cruise_prop = P_cruise_total1 / N_crotor;
+		printf("P_cruise_prop = %lf [W]\n", P_cruise_prop);
+
+		double P_cruise_motor = P_cruise_prop / eta_m;
 		printf("P_cruise_motor = %lf [W]\n", P_cruise_motor);
-		double E_cruise = P_cruise_total * t_cruise / 3600;
+
+		double P_cruise_inv = P_cruise_motor / eta_inv;
+		printf("P_cruise_inv = %lf [W]\n", P_cruise_inv);
+
+		double P_cruise_total2 = P_cruise_inv * N_crotor;
+		printf("P_cruise_total2 = %lf [W]\n", P_cruise_total2);
+
+		double E_cruise = P_cruise_total2 * t_cruise / 3600;
 		printf("E_cruise = %lf [Wh]\n\n", E_cruise);
 
-
-
+		/////////////
+		/// climb ///
+		/////////////
 
 		double T = W_gross * g;
 		double T_rotor = T / N_rotor;
 
-		double sigma = 0.2262;
-
-		double rpm_climb = 1058;
+		double range_climb = 600;
+		double rpm_climb = 500;
 		double omega_climb = Get_omega(rpm_climb);
 		double v_tip_climb = omega_climb * r_disk;
 		double rho_climb = Get_rho(rho0, 0);
-		double t_climb = 3 * 60;
+		double v_climb = 3.333333;
 
-		double Cd0 = 0.03390;
-
-		double P_climb_total = 0.0;
-		double E_climb = 0.0;
-
+		double t_climb = range_climb / v_climb;
 
 		double vi_climb = Get_vi(T_rotor, rho_climb, A_disk);
 		//printf("vi_climb = %lf [m/s]\n", vi_climb);
-		double v_climb = 3.333333;
 		double P_i_climb = Get_P_i(T_rotor, vi_climb + v_climb);
 		//printf("P_i_climb = %lf [W]\n", P_i_climb);
 		double P_0_climb = Get_P_0(sigma, Cd0, rho_climb, A_disk, v_tip_climb);
 		//printf("P_0_climb = %lf [W]\n", P_0_climb);
-		double P_climb_motor = P_i_climb + P_0_climb;
+
+		double P_climb_prop = P_i_climb + P_0_climb;
+		printf("P_cilmb_prop = %lf [W]\n", P_climb_prop);
+
+		double P_climb_motor = P_climb_prop / eta_m;
 		printf("P_climb_motor = %lf [W]\n", P_climb_motor);
-		P_climb_total = P_climb_motor * N_rotor;
+
+		double P_climb_inv = P_climb_motor / eta_inv;
+		printf("P_climb_inv = %lf [W]\n", P_climb_inv);
+
+		double P_climb_total = P_climb_inv * N_rotor;
 		printf("P_climb_total = %lf [W]\n", P_climb_total);
-		E_climb = P_climb_total * (t_climb / 3600);
+
+		double E_climb = P_climb_total * (t_climb / 3600);
 		printf("E_climb = %lf [Wh]\n\n", E_climb);
 
+		/////////////
+		/// hover ///
+		/////////////
 
 		double t_hover = 0;
-		double rpm_hover = 1058;
+		double rpm_hover = 500;
 		double omega_hover = Get_omega(rpm_hover);
 		double v_tip_hover = omega_hover * r_disk;
 		double vi = Get_vi(T_rotor, rho_climb, A_disk);
@@ -216,36 +246,45 @@ int main()
 		double P_i_hover = Get_P_i(T_rotor, vi);
 		double P_0_hover = Get_P_0(sigma, Cd0, rho0, A_disk, v_tip_hover);
 
-		double P_hover_motor = P_i_hover + P_0_hover;
-		double P_hover_total = P_hover_motor * N_rotor;
+		double P_hover_prop = P_i_hover + P_0_hover;
+		printf("P_hover_prop = %lf [W]\n", P_hover_prop);
 
-		while (abs(P_hover_total - P_hover) > 1)
-		{
-			if (P_hover_total > P_hover)
-				rpm_hover = rpm_hover * 0.5;
-			else
-				rpm_hover = rpm_hover * 1.5;
+		double P_hover_motor = P_hover_prop / eta_m;
+		printf("P_hover_motor = %lf [W]\n", P_hover_motor);
 
-			omega_hover = Get_omega(rpm_hover);
-			v_tip_hover = omega_hover * r_disk;
-			P_i_hover = Get_P_i(T_rotor, vi);
-			P_0_hover = Get_P_0(sigma, Cd0, rho0, A_disk, v_tip_hover);
+		double P_hover_inv = P_hover_motor / eta_inv;
+		printf("P_hover_inv = %lf [W]\n", P_hover_inv);
 
-			P_hover_motor = P_i_hover + P_0_hover;
-			P_hover_total = P_hover_motor * N_rotor;
-		}
-
-		printf("rpm_hover = %lf\n", rpm_hover);	// 1266
-
-		printf("P_hover_motor = %lf [W]\n", P_hover_motor); // 199401 [W]
+		double P_hover_total = P_hover_inv * N_rotor;
 		printf("P_hover_total = %lf [W]\n", P_hover_total);
+
 		double E_hover = P_hover_total * t_hover / 3600;
 		printf("E_hover = %lf [Wh]\n\n", E_hover);
 
+		//while (abs(P_hover_total - P_hover) > 1)
+		//{
+		//	if (P_hover_total > P_hover)
+		//		rpm_hover = rpm_hover * 0.5;
+		//	else
+		//		rpm_hover = rpm_hover * 1.5;
 
+		//	omega_hover = Get_omega(rpm_hover);
+		//	v_tip_hover = omega_hover * r_disk;
+		//	P_i_hover = Get_P_i(T_rotor, vi);
+		//	P_0_hover = Get_P_0(sigma, Cd0, rho0, A_disk, v_tip_hover);
 
-		double rpm_descent = 1058;
-		double omega_descent = Get_omega(rpm_climb);
+		//	P_hover_motor = P_i_hover + P_0_hover;
+		//	P_hover_total = P_hover_motor * N_rotor;
+		//}
+
+		//printf("rpm_hover = %lf\n", rpm_hover);	// 1266
+
+		///////////////
+		/// descent ///
+		///////////////
+
+		double rpm_descent = 500;
+		double omega_descent = Get_omega(rpm_descent);
 		double v_tip_descent = omega_descent * r_disk;
 
 		double rho_descent = Get_rho(rho0, 600);
@@ -254,21 +293,28 @@ int main()
 		double v_descent = -1.111111;
 		double P_i_descent = Get_P_i(T_rotor, vi_descent + v_descent);
 		double P_0_descent = Get_P_0(sigma, Cd0, rho_descent, A_disk, v_tip_descent);
-		double P_descent_motor = P_i_descent + P_0_descent;
+
+		double P_descent_prop = P_i_descent + P_0_descent;
+		printf("P_descent_prop = %lf [W]\n", P_descent_prop);
+
+		double P_descent_motor = P_descent_prop / eta_m;
 		printf("P_descent_motor = %lf [W]\n", P_descent_motor);
-		double P_descent_total = P_descent_motor * N_rotor;
+
+		double P_descent_inv = P_descent_motor / eta_inv;
+		printf("P_descent_inv = %lf [W]\n", P_descent_inv);
+
+		double P_descent_total = P_descent_inv * N_rotor;
 		printf("P_descent_total = %lf [W]\n", P_descent_total);
+
 		double E_descent = P_descent_total * (t_descent / 3600);
 		printf("E_descent = %lf [Wh]\n\n", E_descent);
-
-
 
 		double E_total = E_hover + E_climb + E_cruise + E_descent;
 
 		double density_bat = 380; // [Wh/kg]
-		double eta_prop = 0.8;
-		double W_bat = E_total * 1.2 / (density_bat * eta_prop);
+		double W_bat = E_total * 1.2 / density_bat;
 		printf("W_bat = %lf [kg]\n", W_bat);
+
 
 
 		double N = 3.4; // 하중계수.
@@ -313,16 +359,22 @@ int main()
 		double W_motor = 18.7 * 7;
 		printf("W_motor = %lf [kg] \n", W_motor);
 
-		double W_etc = W_gross * 0.10;
+		double W_rod = 137.497;
+		printf("W_rod = %lf [kg]\n", W_rod);
+
+		double W_prop = 30 * 7;
+		printf("W_prop = %lf [kg] \n", W_prop);
+
+		double W_etc = W_gross * 0.08;
 		printf("W_etc = %lf [kg] \n", W_etc);
 
-		double W_empty = W_bat + W_wing + W_fuse + W_seat + W_lg + W_motor + W_etc;
+		double W_empty = W_bat + W_wing + W_fuse + W_seat + W_lg + W_motor + W_rod + W_prop + W_etc;
 		printf("W_empty = %lf[kg] \n\n", W_empty);
 
 		payload_calc = W_gross - W_empty;
 
 		printf("W_gross = %lf [kg]\n", W_gross);
-		printf("payload_calc = %lf [kg]\n", payload_calc);
+		printf("payload_calc = %lf [kg]\n\n\n\n\n", payload_calc);
 
 
 		if (payload_calc > W_payload_req)

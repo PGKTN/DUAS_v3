@@ -1,0 +1,81 @@
+...Comp Geom...
+8 Num Comps
+35 Total Num Meshes
+20016 Total Num Tris
+
+Theo_Area   Wet_Area   Theo_Vol    Wet_Vol  Name
+   25.083     24.156      8.052      8.022  FuselageGeom   
+   30.528     28.306      1.635      1.569  wing           
+    7.579      7.257      0.585      0.579  PodGeom        
+    7.579      7.257      0.585      0.579  PodGeom        
+    2.677      2.469      0.085      0.081  VT             
+    2.677      2.469      0.085      0.081  VT             
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.490      0.490      0.004      0.004  cruise_prop1   
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.495      0.495      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+    0.490      0.490      0.004      0.004  PropGeom       
+-------------------------------------------------
+   89.881     85.670     11.133     11.017  Totals         
+
+Tag_Theo_Area   Tag_Wet_Area    Tag_Name
+       25.083         24.156    FuselageGeom_S_Surf0
+       15.264         14.153    wing_S_Surf0   
+       15.264         14.153    wing_S_Surf1   
+        7.579          7.257    PodGeom_S_Surf0
+        7.579          7.257    PodGeom_S_Surf1
+        2.677          2.469    VT_S_Surf0     
+        2.677          2.469    VT_S_Surf1     
+        0.490          0.490    cruise_prop1_S_Surf0
+        0.490          0.490    cruise_prop1_S_Surf1
+        0.490          0.490    cruise_prop1_S_Surf2
+        0.490          0.490    cruise_prop1_S_Surf3
+        0.490          0.490    cruise_prop1_S_Surf0
+        0.490          0.490    cruise_prop1_S_Surf1
+        0.490          0.490    cruise_prop1_S_Surf2
+        0.490          0.490    cruise_prop1_S_Surf3
+        0.490          0.490    cruise_prop1_S_Surf4
+        0.490          0.490    cruise_prop1_S_Surf5
+        0.490          0.490    cruise_prop1_S_Surf6
+        0.490          0.490    cruise_prop1_S_Surf7
+        0.495          0.495    PropGeom_S_Surf0
+        0.495          0.495    PropGeom_S_Surf1
+        0.495          0.495    PropGeom_S_Surf2
+        0.495          0.495    PropGeom_S_Surf3
+        0.495          0.495    PropGeom_S_Surf4
+        0.495          0.495    PropGeom_S_Surf5
+        0.495          0.495    PropGeom_S_Surf6
+        0.495          0.495    PropGeom_S_Surf7
+        0.490          0.490    PropGeom_S_Surf0
+        0.490          0.490    PropGeom_S_Surf1
+        0.490          0.490    PropGeom_S_Surf2
+        0.490          0.490    PropGeom_S_Surf3
+        0.490          0.490    PropGeom_S_Surf4
+        0.490          0.490    PropGeom_S_Surf5
+        0.490          0.490    PropGeom_S_Surf6
+        0.490          0.490    PropGeom_S_Surf7
+WARNING: 1 open meshes merged
+     Merged: wing
